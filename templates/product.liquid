@@ -1,0 +1,96 @@
+<div class="content">
+  <div id="product-wrapper" class="clearfix">
+    <!--Begin product-left-->
+    <div id="product-left" class="left"> 
+      <h2>{{ product.title }}</h2>
+
+
+      <!-- Hide variant and option if it's the default stuff-->
+      {% if product.options.first == "Title" and product.variants.first.title == "Default Title" %}
+      <div id="variant-add">
+        <form action="/cart/add" method="post" id="add-to-cart">
+          <div id="price-field">{{ product.variants.first.price | money }}</div>
+
+          <div id="product-variants" style="display:none;">
+            {% if product.options.size == 1 %}
+            <label for="product-select-option-0">{{ product.options.first }}</label>
+            {% endif %}
+            <select id="product-select" name='id'>
+              {% for variant in product.variants %}
+              <option value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <input type="submit" name="add" value="add to cart" class="add-to-cart cupid-blue" onclick="addItem('add-to-cart');return false;"/>
+        </form>
+      </div>
+      {% else %}
+      <div id="variant-add">
+        <form action="/cart/add" method="post" id="add-to-cart">
+          <div id="product-variants">
+            <div id="price-field"></div>
+            {% if product.options.size == 1 %}<label for="product-select-option-0">{{ product.options.first }}</label>{% endif %}
+            <select id="product-select" name='id'>
+              {% for variant in product.variants %}
+              <option value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <input type="submit" name="add" value="add to cart" class="add-to-cart cupid-blue" onclick="addItem('add-to-cart');return false;"/>
+        </form>
+      </div>
+      {% endif %}
+
+      <div class="description">{{ product.description }}</div>
+      <div class="social-stuff">
+        {% include 'like' with product %}
+      </div>
+
+
+
+
+    </div> <!--End product-left -->
+
+    <div id="product-right" class="right">
+
+      <div class="mainimage">
+        <div class="mainimage-inner vert-align">
+          <a href="{{ product.images.first | product_img_url: 'original'}}" class="fancy" rel="fancygrp">
+            <img src="{{ product.images.first | product_img_url: 'medium' }}" alt="{{ product.title | escape }}" />
+          </a>
+        </div>
+      </div>
+      {% if product.images.size > 1 %}
+      <div id="product-thumbs" class="clearfix">
+        {% for image in product.images %}
+        {% if forloop.index != 1 %}
+        <div class="thumbnail left{% cycle '','','',' no-push' %}">
+          <div class="thumbnail-inner vert-align">
+            <a href="{{ image | product_img_url :'original' }}" class="productimage-small" title="{{product.title | escape }}" >
+              <img src="{{ image | product_img_url: 'thumb'}}" alt="{{product.title | escape }}" />
+            </a>
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}  
+
+
+    </div> <!-- end product-right -->
+  </div><!--End product wrapper-->
+
+
+
+
+  {% if collection %}            
+  <div class="product-navigate clearfix">
+    {% if collection.previous_product %}
+    <p class="left">{{ '&laquo; Prev' | link_to: collection.previous_product }}</p>
+    {% endif %}
+    {% if collection.next_product %}
+    <p class="right">{{ 'Next &raquo;' | link_to: collection.next_product }}</p>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>

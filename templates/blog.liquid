@@ -1,0 +1,54 @@
+<div class="content">
+	<h1 class="blog-title">
+	      {% if current_tags.size %}
+	        <a href="{{ blog.url}}" alt="back to {{ blog.title}}">{{blog.title}}</a>
+	      {% else %}
+	        {{blog.title}} 
+	      {% endif %}
+	      {% if current_tags.size %} &raquo; {% for tag in current_tags %}{{ tag }}{% endfor %}{% endif %}
+	  </h1>
+
+
+
+	  {% paginate blog.articles by 5 %}
+
+	  {% for article in blog.articles  %}
+
+	  <div class="content-box">
+	    <h2><a href="{{ article.url }}">{{ article.title }}</a></h2>
+	    <div class="date">{{ article.created_at | date: "%m.%d.%Y" }}</div>
+	    {% if article.excerpt.size > 0 %}
+	      {{ article.excerpt }}
+	    {% else %}
+	    {{ article.content | truncatewords: 200 }}
+	    {% endif %}
+	    <div class="article-data clearfix">
+	      <div class="tags left">
+	      tags:
+	       {% if article.tags.size == 0 %}
+	         <em>no tags</em>
+	       {% else %}
+	         {% for tag in article.tags %}    
+	         <a href="/blogs/{{ blogs[settings.blog].handle }}/tagged/{{tag | handleize }}">{{ tag }}</a>{% if forloop.last == false %},    
+	           {% endif %}
+	           {% endfor %}
+	       {% endif %}
+	       </div>
+	       {% if blogs.news.comments_enabled? == true %}
+	       <div class="comments right">
+	          <a href="{{ article.comment_post_url}}">{{ article.comments_count }} {{ article.comments_count | pluralize: 'comment', 'comments'}}</a>
+	       </div>
+	       {% endif %}
+
+	     </div>
+	  </div>
+
+	  {% endfor %}
+
+	  <div id="pagination">
+	    {{ paginate | default_pagination }}
+	  </div>
+
+	  {% endpaginate %}
+	
+</div>

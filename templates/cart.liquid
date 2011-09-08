@@ -1,0 +1,116 @@
+ <script type="text/javascript">
+  function remove_item(id) {
+    document.getElementById('updates_'+id).value = 0;
+    document.getElementById('cartform').submit();
+  }
+</script>
+
+
+
+{% if settings.use_t_and_c %}
+
+<script type="text/javascript">
+  function remove_item(id) {
+    document.getElementById('updates_'+id).value = 0;
+    document.getElementById('cartform').submit();
+  }
+  
+  $(document).ready(function(){
+     $("#checkout").click(function(){
+       if($('#agree').is(':checked')){
+         $("#checkout").submit();
+       }
+       else{
+         alert("You must agree to the Terms and Conditions first");
+         return false;
+       }
+     });
+   });
+</script>
+{% endif %}
+<div class="content">
+  <h2 class="push-down">Your Cart</h2>
+
+{% if cart.item_count == 0 %} 
+  <p>You don't have anything in your cart yet!</p>
+{% else %}
+
+
+<form action="/cart" method="post" id="cartform">
+  <div id="cart-page">
+    <table width="640" cellspacing="0" cellpadding="0" border="0">  
+      <tbody>
+        <tr id="cart-headlines">
+          <td class="cart-thumb">&nbsp;</td>
+          <td class="cart-title">Product Title</td>     
+          <td class="cart-unitprice">Price</td>                       
+          <td class="cart-quantity">Quantity</td>        
+          <td class="cart-total">Total</td>        
+          <td class="cart-remove">Remove</td>                     
+        </tr>
+    {% for item in cart.items %}    
+      
+        <tr id="item-{{item.id}}" class="cart-item" >
+          <td >
+            <a href="{{item.product.url}}" title="View {{item.title}} Page">
+              <img src="{{item.product.featured_image | product_img_url: 'thumb' }}" alt="{{item.title | escape }}" />
+            </a>
+          </td>
+
+          <td >
+            <a href="{{item.product.url}}" title="View {{item.title | escape }} Page">
+              {{ item.title | truncatewords:5 }}
+              {% if item.variant.available == true %}
+              ({{item.variant.title}})
+              {% endif %}
+            </a>
+          </td>
+
+
+          <td>
+              {{ item.price | money }}
+          </td>
+          
+          <td>
+            <input type="text" size="4" name="updates[{{item.variant.id}}]" id="updates_{{item.variant.id}}" value="{{item.quantity}}" onfocus="this.select();" />
+          </td>
+          
+          <td>
+            {{ item.line_price | money }}
+          </td>
+          
+          <td>
+            <a href="#" onclick="remove_item({{item.variant.id}}); return false;" class="remove button">remove</a>            
+          </td>
+        </tr>
+        {% endfor %}
+   
+    </tbody>
+    
+  </table>
+  <div class="clearfix">
+
+
+  <div id="cart-options" class="right clearfix">
+    <h3 class="right">The total of your cart is: {{ cart.total_price | money }}</h3>
+    <!-- If settings for T&C is enabled -->
+    {% if settings.use_t_and_c %}
+    <div class="terms right">
+      <input type="checkbox" id="agree"/>
+      I agree with the <a href="/pages/{{ settings.t_and_c }}">Terms and Conditions</a>
+    </div>
+    {% endif %}
+    <div class="submit-cart right">
+      <input type="submit" name="update" value="Update Cart" id="update-cart" class="button update" />
+      <input id="checkout" class="button checkout" type="submit" name="checkout"value="Check Out" />
+    </div>
+  </div>
+  </div>
+</form>
+
+</div>
+
+{% endif %}
+
+
+</div>
