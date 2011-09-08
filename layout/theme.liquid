@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="{{ 'style.css' | asset_url }}">
   <!-- end CSS-->
 
-  <script src="js/libs/modernizr-2.0.6.min.js"></script>
+  <script src="{{ 'modernizr-2.0.6.min.js' | asset_url }}"></script>
 	{{ content_for_header }}
 
 </head>
@@ -27,13 +27,22 @@
 
   <div id="container">
     <header>
-		Header here!
+		<h1><a href="{{ shop.url}}">{{ shop.name }}</a></h1>
+		<ul>
+			{% for link in linklists.main-menu.links %}
+				<li><a href="{{ link.url}}" title="{{ link.title }}">{{ link.title }}</a></li>
+			{% endfor %}
+		</ul>
     </header>
     <div id="main" role="main">
 		{{ content_for_layout}}
     </div>
     <footer>
-
+		<ul>
+			{% for link in linklists.footer.links %}
+				<li><a href="{{ link.url}}" title="{{ link.title }}">{{ link.title }}</a></li>
+			{% endfor %}
+		</ul>
     </footer>
   </div> <!--! end of #container -->
 

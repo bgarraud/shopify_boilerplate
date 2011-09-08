@@ -1,15 +1,14 @@
-<div class="content collection-test">
 
 {% paginate collection.products by 20 %}
 
-	<h2 class="push-down">{{ collection.title | escape }}</h2>
+	<h2>{{ collection.title | escape }}</h2>
 	{% if collection.description.size > 0 %}
 	  <div class="collection-description">{{ collection.description }}</div>
 	{% endif %}
 	
 		
 {% if collection.products.size > 0 %}
-  <ul class="clearfix product-loop">
+  <ul class="clearfix">
     {% for product in collection.products | limit: 32 %}
 		{% include 'loop' %}
     {% endfor %}
@@ -18,13 +17,13 @@
   
 
 {% else %}
-<p id="empty">There are no products in this collection.</p>{% endif %}
+<p>There are no products in this collection.</p>{% endif %}
 <!-- END PRODUCTS -->{% if paginate.pages > 1 %}
 <!-- START PAGINATE -->
 <div id="collection-paginate">
 	{{ paginate | default_pagination }}
 </div>
-<!-- END PAGINATE -->{% endif %}{% endpaginate %}
+<!-- END PAGINATE -->
+{% endif %}
+{% endpaginate %}
 
-
-</div>

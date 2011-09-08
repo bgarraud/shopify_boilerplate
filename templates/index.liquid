@@ -1,1 +1,5 @@
-index
+<ul>
+{% for product in collections.frontpage.products %}
+{% include 'loop' %}
+{% endfor %}
+</ul>
