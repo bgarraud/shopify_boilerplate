@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title></title>
+  <title>{{ shop.name }}</title>
   <meta name="description" content="">
   <meta name="author" content="">
 
@@ -16,6 +16,7 @@
   <!-- CSS concatenated and minified via ant build script-->
   <link rel="stylesheet" href="{{ 'reset.css' | asset_url }}">
   <link rel="stylesheet" href="{{ 'style.css' | asset_url }}">
+
   <!-- end CSS-->
 
   <script src="{{ 'modernizr-2.0.6.min.js' | asset_url }}"></script>
@@ -33,6 +34,15 @@
 				<li><a href="{{ link.url}}" title="{{ link.title }}">{{ link.title }}</a></li>
 			{% endfor %}
 		</ul>
+		<div id="login">
+			{% if shop.customer_accounts_enabled %}
+			  {% if customer  %}
+			    <a href="/account">Welcome {{ customer.first_name }}</a> | {{ "Logout" | customer_logout_link }}
+			  {% else %}
+			    {{ "Login" | customer_login_link }}
+			  {% endif %}
+			{% endif %}
+		</div>
     </header>
     <div id="main" role="main">
 		{{ content_for_layout}}
@@ -50,11 +60,41 @@
   	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
   	<script>window.jQuery || document.write('<script src="js/libs/jquery-1.6.2.min.js"><\/script>')</script>
 	{{ 'option_selection.js' | shopify_asset_url | script_tag }}
-
+	{% if template contains 'customers' %}
+	{{ "shopify_common.js" | shopify_asset_url | script_tag }}
+	{{ "customer_area.js"  | shopify_asset_url | script_tag }}
+	{% endif %}
   <!--[if lt IE 7 ]>
     <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
     <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
   <![endif]-->
-  
+ 
+{% if template == "product" %}
+
+<script type="text/javascript">
+// <![CDATA[  
+var selectCallback = function(variant, selector) {
+  if (variant && variant.available == true) {
+    // selected a valid variant
+    jQuery('#purchase').removeClass('disabled').removeAttr('disabled'); // remove unavailable class from add-to-cart button, and re-enable button
+    jQuery('#price-field').html(Shopify.formatMoney(variant.price, "{{shop.money_with_currency_format}}"));  // update price field
+  } else {
+    // variant doesn't exist
+    jQuery('#purchase').addClass('disabled').attr('disabled', 'disabled');      // set add-to-cart button to unavailable class and disable button
+    var message = variant ? "Sold Out" : "Unavailable";    
+    jQuery('#price-field').text(message); // update price-field message
+  }
+};
+
+// initialize multi selector for product
+jQuery(function() {
+  new Shopify.OptionSelectors("product-select", { product: {{ product | json }}, onVariantSelected: selectCallback });
+});
+// ]]>
+</script>
+
+{% endif %}
+
+
 </body>
 </html>

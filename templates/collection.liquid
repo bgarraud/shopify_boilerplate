@@ -1,29 +1,38 @@
+{% if collection.tags.size != 0 %}
+{% if current_tags %}
+  <li><a href="{% if active_url == '/collections/all' %}/collections/all{% else %}{{ collection.url }}{% endif %}">All</a></li>
+ {% else %}
+  <li class="active"><a href="{% if active_url == '/collections/all' %}/collections/all{% else %}{{ collection.url }}{% endif %}" >All</a></li>
+{% endif %}
+  
+  {% for tag in collection.all_tags %}
+    {% if current_tags contains tag %}
+    <li class="active"><a href="{{ collection.url }}/{{ tag | handle }}">{{ tag }}</a></li>
+    {% else %}
+    <li><a href="{{ collection.url }}/{{ tag | handle }}">{{ tag }}</a></li>
+    {% endif %}
+  {% endfor %}
+{% endif %}
 
 {% paginate collection.products by 20 %}
-
 	<h2>{{ collection.title | escape }}</h2>
 	{% if collection.description.size > 0 %}
 	  <div class="collection-description">{{ collection.description }}</div>
 	{% endif %}
-	
-		
 {% if collection.products.size > 0 %}
   <ul class="clearfix">
-    {% for product in collection.products | limit: 32 %}
+    {% for product in collection.products | limit: 20 %}
 		{% include 'loop' %}
     {% endfor %}
   </ul>
-  
-  
-
 {% else %}
-<p>There are no products in this collection.</p>{% endif %}
-<!-- END PRODUCTS -->{% if paginate.pages > 1 %}
-<!-- START PAGINATE -->
-<div id="collection-paginate">
+	<p>There are no products in this collection.</p>
+{% endif %}
+
+{% if paginate.pages > 1 %}
+<div class="pagination">
 	{{ paginate | default_pagination }}
 </div>
-<!-- END PAGINATE -->
 {% endif %}
 {% endpaginate %}
 

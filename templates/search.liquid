@@ -1,34 +1,50 @@
-<div id="full-width">
-    
-  {% if search.performed %}
-	<h2>Searching for "{{search.terms | escape}}"</h2>
-    {% paginate search.results by 8 %}  
-    {% if search.results == empty %}  
-      <p class="alt">Your search for "{{search.terms | escape}}" did not yield any results</p>              
-    {% else %}  
-    	<table id="collection" cellpadding="0" cellspacing="0">
-      	{% tablerow item in search.results cols: 1 %}      
-      		<div class="product-image">
-      			<a href="{{ item.url | within: collection }}" title="{{ item.title | escape }}"><img src="{{ item.images.first | product_img_url: 'small' }}" alt="{{ item.title | escape }}" /></a>
-      		</div>
-      		<div class="product-info">
-      			<p class="title"><a class="result-title" href="{{ item.url | within: collection }}">{{ item.title | truncate: 30 }}</a>
-      			<p>{{ item.content | strip_html | truncatewords: 40 | highlight: search.terms }}<br /><a class="search-result" href="{{ item.url | within: collection }}">View this Product</a></p>
-      		</div><div style="clear: both;"></div><div class="dotted-divider"></div>
-      	{% endtablerow %}<div class="dotted-divider"></div>
-    	</table>
-    {% endif %}
-    
-  	{% if paginate.pages > 1 %}
-    	<div class="pagination">
-    		{{ paginate | default_pagination }}
-    	</div>
-  	{% endif %}
-    
-    {% endpaginate %}    
-    
-  {% endif %}
+{% paginate search.results by 20 %}
+<h2>Search</h2>
+<form method="get" action="/search">
+	<input type="text" name="q"{% if search.performed %} value="{{ search.terms | escape | downcase }}"{% endif %} class="field" /> 
+	<input type="submit" value="Search" class="search-btn button" />
+</form>
+{% if search.results == empty %}
+<p id="empty">Your search for "{{ search.terms | escape | downcase }}" did not yield any results.</p>
+{% else %}
 
-	<h2>Search</h2>
+<!-- START RESULTS -->
+<ul id="results" class="clear">
 
+{% for item in search.results %}
+<!-- START RESULT {{ forloop.index }} -->
+<li{% cycle '', '', ' class="end"' %}>
+
+<!--If the search result is a product_img_urloduct -->
+{% if item.featured_image %}
+<h3><a href="{{ item.url | within: collections.all }}">{{ item.title | escape | truncatewords: 10 }}</a></h3>
+<a href="{{ item.url | within: collections.all }}"><img src="{{ item.featured_image | product_img_url: "small" }}" alt="{{ item.title | escape }}" /></a>
+	<p class="coll-price"><strong>{{ item.price | money }}</strong> {% if item.compare_at_price_max > item.price %} <em> {{ item.compare_at_price_max | money }}</em>{% endif %}</p>
+	<p>{{ item.description | truncatewords:30 | highlight: search.terms}}</p>
+<!--If the search result is NOT a product -->
+{% else %}
+<h3><a href="{{ item.url }}">{{ item.title | escape | truncatewords: 3 }}</a></h3>
+
+<!-- START DESC -->
+<div class="desc">
+	<div class="bg">
+		<p>{{ item.content | strip_html | strip_newlines | truncatewords: 60 | highlight: search.terms }}</p>
+	</div>
 </div>
+<!-- END DESC -->
+{% endif %}
+</li>
+<!-- END RESULT {{ forloop.index }} -->
+{% endfor %}
+</ul>
+<!-- END RESULTS -->
+
+{% if paginate.pages > 1 %}
+<!-- START PAGINATE -->
+<div class="pagination">
+	{{ paginate | default_pagination }}
+</div>
+<!-- END PAGINATE -->
+{% endif %}
+{% endif %}
+{% endpaginate %}
