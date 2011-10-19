@@ -19,7 +19,7 @@
 
   <!-- end CSS-->
 
-  <script src="{{ 'modernizr-2.0.6.min.js' | asset_url }}"></script>
+ 	<script src="{{ 'modernizr-2.0.6.min.js' | asset_url }}"></script>
 	{{ content_for_header }}
 
 </head>
@@ -89,8 +89,19 @@ var selectCallback = function(variant, selector) {
 // initialize multi selector for product
 jQuery(function() {
   new Shopify.OptionSelectors("product-select", { product: {{ product | json }}, onVariantSelected: selectCallback });
+
+{% assign found_one_in_stock = false %}
+{% for variant in product.variants %}
+  {% if variant.available and found_one_in_stock == false %}
+    {% assign found_one_in_stock = true %}
+    {% for option in product.options %}
+    jQuery('.single-option-selector:eq(' + {{ forloop.index0 }} + ')').val({{ variant.options[forloop.index0] | json }}).trigger('change');
+    {% endfor %}
+  {% endif %}
+{% endfor %}
 });
 // ]]>
+
 </script>
 
 {% endif %}

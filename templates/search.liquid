@@ -1,13 +1,14 @@
 {% paginate search.results by 20 %}
 <h2>Search</h2>
+
 <form method="get" action="/search">
 	<input type="text" name="q"{% if search.performed %} value="{{ search.terms | escape | downcase }}"{% endif %} class="field" /> 
 	<input type="submit" value="Search" class="search-btn button" />
 </form>
+
 {% if search.results == empty %}
 <p>Your search for "{{ search.terms | escape | downcase }}" did not yield any results.</p>
 {% else %}
-
 
 <ul id="results">
 {% for item in search.results %}
@@ -31,11 +32,9 @@
 </ul>
 
 {% if paginate.pages > 1 %}
-<!-- START PAGINATE -->
 <div class="pagination">
 	{{ paginate | default_pagination }}
 </div>
-<!-- END PAGINATE -->
 {% endif %}
 {% endif %}
 {% endpaginate %}
