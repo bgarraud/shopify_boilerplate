@@ -5,39 +5,30 @@
 	<input type="submit" value="Search" class="search-btn button" />
 </form>
 {% if search.results == empty %}
-<p id="empty">Your search for "{{ search.terms | escape | downcase }}" did not yield any results.</p>
+<p>Your search for "{{ search.terms | escape | downcase }}" did not yield any results.</p>
 {% else %}
 
-<!-- START RESULTS -->
-<ul id="results" class="clear">
 
+<ul id="results">
 {% for item in search.results %}
-<!-- START RESULT {{ forloop.index }} -->
-<li{% cycle '', '', ' class="end"' %}>
+<li>
 
-<!--If the search result is a product_img_urloduct -->
+<!--If the search result is a product -->
 {% if item.featured_image %}
-<h3><a href="{{ item.url | within: collections.all }}">{{ item.title | escape | truncatewords: 10 }}</a></h3>
+<h3><a href="{{ item.url | within: collections.all }}">{{ item.title | escape }}</a></h3>
 <a href="{{ item.url | within: collections.all }}"><img src="{{ item.featured_image | product_img_url: "small" }}" alt="{{ item.title | escape }}" /></a>
-	<p class="coll-price"><strong>{{ item.price | money }}</strong> {% if item.compare_at_price_max > item.price %} <em> {{ item.compare_at_price_max | money }}</em>{% endif %}</p>
-	<p>{{ item.description | truncatewords:30 | highlight: search.terms}}</p>
+<p>{{ item.price | money }}{% if item.compare_at_price_max > item.price %} <em> {{ item.compare_at_price_max | money }}</em>{% endif %}</p>
+<p>{{ item.description | highlight: search.terms}}</p>
+
 <!--If the search result is NOT a product -->
 {% else %}
-<h3><a href="{{ item.url }}">{{ item.title | escape | truncatewords: 3 }}</a></h3>
-
-<!-- START DESC -->
-<div class="desc">
-	<div class="bg">
-		<p>{{ item.content | strip_html | strip_newlines | truncatewords: 60 | highlight: search.terms }}</p>
-	</div>
-</div>
-<!-- END DESC -->
+<h3><a href="{{ item.url }}">{{ item.title | escape }}</a></h3>
+<p>{{ item.content | strip_html | strip_newlines |  highlight: search.terms }}</p>
 {% endif %}
+
 </li>
-<!-- END RESULT {{ forloop.index }} -->
 {% endfor %}
 </ul>
-<!-- END RESULTS -->
 
 {% if paginate.pages > 1 %}
 <!-- START PAGINATE -->
