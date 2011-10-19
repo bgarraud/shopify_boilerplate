@@ -1,31 +1,11 @@
 <h2>{{ product.title }}</h2>
 
-
-<!-- Hide variant and option if it's the default stuff-->
-{% if product.options.first == "Title" and product.variants.first.title == "Default Title" %}
-<div id="variant-add">
+<div id="product-selection">
 	<form action="/cart/add" method="post" id="add-to-cart">
-		<div id="price-field">{{ product.variants.first.price | money }}</div>
-
-		<div id="product-variants" style="display:none;">
-			{% if product.options.size == 1 %}
-			<label for="product-select-option-0">{{ product.options.first }}</label>
-			{% endif %}
-			<select id="product-select" name='id'>
-				{% for variant in product.variants %}
-				<option value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money }}</option>
-				{% endfor %}
-			</select>
-		</div>
-		<input type="submit" name="add" value="add to cart" class="add-to-cart cupid-blue" onclick="addItem('add-to-cart');return false;"/>
-	</form>
-</div>
-{% else %}
-
-<div id="variant-add">
-	<form action="/cart/add" method="post" id="add-to-cart">
-		<div id="product-variants">
+		<!-- Hide title + dropdown if the product has default option and variant name. -->
+		<div id="product-variants" {% if product.options.first == "Title" and product.variants.first.title == "Default Title" %}style="display:none;"{% endif %}>
 			<div id="price-field"></div>
+			<!-- Show Option title even if there is only one option. -->
 			{% if product.options.size == 1 %}<label for="product-select-option-0">{{ product.options.first }}</label>{% endif %}
 			<select id="product-select" name='id'>
 				{% for variant in product.variants %}
@@ -33,12 +13,11 @@
 				{% endfor %}
 			</select>
 		</div>
-		<input type="submit" name="add" value="add to cart" class="add-to-cart cupid-blue" onclick="addItem('add-to-cart');return false;"/>
+		<input type="submit" name="add" value="add to cart"/>
 	</form>
 </div>
-{% endif %}
 
-<div class="description">{{ product.description }}</div>
+<div id="product-description">{{ product.description }}</div>
 
 <div id="product-main-image">
 <a href="{{ product.images.first | product_img_url: 'original'}}">
@@ -50,8 +29,8 @@
 <ul id="product-thumbs">
 	{% for image in product.images %}
 	{% if forloop.index != 1 %}
-	<li class="thumbnail left{% cycle '','','',' no-push' %}">
-		<a href="{{ image | product_img_url :'original' }}" class="productimage-small" title="{{product.title | escape }}" >
+	<li>
+		<a href="{{ image | product_img_url :'original' }}" class="product-thumbs" title="{{product.title | escape }}" >
 			<img src="{{ image | product_img_url: 'thumb'}}" alt="{{product.title | escape }}" />
 		</a>
 	</li>
@@ -61,14 +40,13 @@
 {% endif %}  
 
 
-
 {% if collection %}            
-<div class="product-navigate clearfix">
+<div id="product-navigate">
 	{% if collection.previous_product %}
-	<p class="left">{{ '&laquo; Prev' | link_to: collection.previous_product }}</p>
+	<p>{{ '&laquo; Prev' | link_to: collection.previous_product }}</p>
 	{% endif %}
 	{% if collection.next_product %}
-	<p class="right">{{ 'Next &raquo;' | link_to: collection.next_product }}</p>
+	<p>{{ 'Next &raquo;' | link_to: collection.next_product }}</p>
 	{% endif %}
 </div>
 {% endif %}
