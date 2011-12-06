@@ -1,10 +1,11 @@
-<li>
-	<a href="{{ product.url }}" alt="{{ product.title}}" class="fancy">
+<div class="product">
 		<div class="product-image">
-			<img src="{{ product.featured_image | product_img_url: 'compact' }}"  alt="{{ product.title }}"/>
+			<a href="{{ product.url }}" alt="{{ product.title}}">
+					<img src="{{ product.featured_image | product_img_url: 'compact' }}"  alt="{{ product.title }}"/>
+			</a>
 		</div>
 		<div class="product-title">
-			<a href="{{ product.url | within: collection }}" alt="{{ product.title}}">{{ product.title }}</a>
+			<a href="{{ product.url }}" alt="{{ product.title}}">{{ product.title }}</a>
 		</div>
 		<div class="product-price">
 			{% if product.price_varies %} 
@@ -13,5 +14,5 @@
 			{{ product.price | money }}
 			{% endif %}
 		</div>
-	</a>
-</li>
+
+</div>
